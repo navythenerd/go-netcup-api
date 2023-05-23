@@ -26,7 +26,7 @@ func NewClient(apiKey string, apiPassword string, customerNumber string) *Client
 	}
 }
 
-func sendJson(data any) (*Response, error) {
+func (c *Client) sendJson(data any) (*Response, error) {
 	payload, err := json.Marshal(data)
 
 	if err != nil {
@@ -39,8 +39,7 @@ func sendJson(data any) (*Response, error) {
 		return nil, err
 	}
 
-	httpClient := http.Client{}
-	resp, err := httpClient.Do(req)
+	resp, err := c.httpClient.Do(req)
 
 	if err != nil {
 		return nil, err
@@ -77,7 +76,7 @@ func (c *Client) Login() error {
 	req.Param.ApiPassword = c.apiPassword
 	req.Param.CustomerNumber = c.customerNumber
 
-	resp, err := sendJson(req)
+	resp, err := c.sendJson(req)
 
 	if err != nil {
 		return err
@@ -106,7 +105,7 @@ func (c *Client) Logout() error {
 	req.Param.ApiSessionId = c.sessionId
 	req.Param.CustomerNumber = c.customerNumber
 
-	resp, err := sendJson(req)
+	resp, err := c.sendJson(req)
 
 	if err != nil {
 		return err
@@ -130,7 +129,7 @@ func (c *Client) GetDNSRecords(domain string) ([]*DNSRecord, error) {
 	req.Param.CustomerNumber = c.customerNumber
 	req.Param.DomainName = domain
 
-	resp, err := sendJson(req)
+	resp, err := c.sendJson(req)
 
 	if err != nil {
 		return nil, err
@@ -160,7 +159,7 @@ func (c *Client) UpdateDNSRecords(domain string, records []*DNSRecord) error {
 	req.Param.DomainName = domain
 	req.Param.DNSRecordSet.Records = records
 
-	resp, err := sendJson(req)
+	resp, err := c.sendJson(req)
 
 	if err != nil {
 		return err
